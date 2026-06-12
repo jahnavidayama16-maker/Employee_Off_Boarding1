@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Professional Hero Section -->
+<div class="row align-items-center py-5 rounded-4 shadow-sm"
+    style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+    <div class="col-md-7 px-5 text-white">
+        <h1 class="display-4 fw-bold mb-3">Enterprise Workforce<br><span class="text-primary">Lifecycle
+                Management</span></h1>
+        <p class="lead mb-4 fw-light opacity-75">Welcome to the official <strong>Microlent Systems</strong> internal
+            portal. A centralized command center for streamline HR requests, multi-tier clearances, asset recovery, and
+            compliance auditing.</p>
+
+        <div class="d-flex gap-3">
+            <!-- Login button removed as requested -->
+        </div>
+    </div>
+    <div class="col-md-5 text-center d-none d-md-block">
+        <!-- Render a stylized graphic using bootstrap icons to look professional without needing external images -->
+        <div class="position-relative">
+            <div class="badge bg-white text-dark p-4 rounded-circle shadow-lg position-relative z-1"
+                style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-shield-check text-primary" style="font-size: 5rem;"></i>
+            </div>
+            <!-- Decorative circle -->
+            <div class="position-absolute top-50 start-50 translate-middle rounded-circle bg-primary opacity-25"
+                style="width: 250px; height: 250px; z-index: 0; filter: blur(30px);"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5 pt-3 mb-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm radius-lg p-3">
+            <div class="card-body">
+                <div class="bg-primary bg-opacity-10 rounded-circle text-primary mb-3 d-inline-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
+                    <i class="bi bi-diagram-3-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold">Automated Workflows</h5>
+                <p class="text-muted small">Multi-tier hierarchical approvals dynamically routed to immediate managers
+                    with built-in rejection justification protocols.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm radius-lg p-3">
+            <div class="card-body">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle mb-3 d-inline-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
+                    <i class="bi bi-cpu fs-4"></i>
+                </div>
+                <h5 class="fw-bold">Cross-Dept Clearances</h5>
+                <p class="text-muted small">Simultaneous checklist distribution triggering IT, Finance, and Library
+                    protocols upon manager validation.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm radius-lg p-3">
+            <div class="card-body">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle mb-3 d-inline-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
+                    <i class="bi bi-file-lock2-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold">Compliance Auditing</h5>
+                <p class="text-muted small">A microsecond-accurate cryptographic ledger capturing all portal
+                    interactions for continuous corporate compliance.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Workflow User Manual -->
+<div class="row mt-5 pt-4">
+    <div class="col-md-9 mx-auto">
+        <div class="text-center mb-5">
+            <span class="badge bg-light text-primary mb-2 shadow-sm border px-3 py-2">Documentation</span>
+            <h3 class="fw-bold text-dark">Employee Off-boarding Manual</h3>
+            <p class="text-muted">A step-by-step interactive guide to navigating the corporate separation process.</p>
+        </div>
+
+        <div class="accordion shadow-sm radius-lg" id="workflowAccordion">
+            <!-- Step 1 -->
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button bg-white text-dark fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <span class="badge bg-primary me-3 px-3">Step 1</span> Initiate Resignation Request
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                    data-bs-parent="#workflowAccordion">
+                    <div class="accordion-body text-muted p-4">
+                        Log into the <strong>Employee Portal</strong> and navigate to your active dashboard. Click on
+                        <code class="bg-light px-2 py-1 rounded text-dark border">Raise Resignation</code> to fill out
+                        the standard termination form. You are required to upload a formal PDF resignation letter and
+                        define your expected final working day.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed bg-white text-dark fw-bold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                        aria-controls="collapseTwo">
+                        <span class="badge bg-warning text-dark me-3 px-3">Step 2</span> Manager Review & Pipeline
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                    data-bs-parent="#workflowAccordion">
+                    <div class="accordion-body text-muted p-4">
+                        Your request is automatically queued for your direct Manager. You can track their decision in
+                        real-time on your dashboard using the <strong>Active Resignation Tracker</strong>. If rejected,
+                        the manager is required to provide a mandatory corporate justification.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed bg-white text-dark fw-bold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                        aria-controls="collapseThree">
+                        <span class="badge bg-danger me-3 px-3">Step 3</span> Complete Mandatory Exit Interview
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                    data-bs-parent="#workflowAccordion">
+                    <div class="accordion-body text-muted p-4">
+                        Upon successful Manager approval, a classified <strong>Exit Interview</strong> form unlocks on
+                        your dashboard. You must submit this critical feedback before your request can legally proceed
+                        to the HR Clearance layer.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed bg-white text-dark fw-bold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false"
+                        aria-controls="collapseFour">
+                        <span class="badge bg-success me-3 px-3">Step 4</span> Clearances & Access Revocation
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                    data-bs-parent="#workflowAccordion">
+                    <div class="accordion-body text-muted p-4">
+                        HR automatically triggers cross-department checklists (IT, Finance, Library) and collects your
+                        hardware assets. Once the Admin signs off on the final exit, the system will execute a
+                        <strong>Soft-Delete Protocol</strong>, permanently deactivating your internal authentication
+                        access.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer area -->
+<div class="text-center mt-5 pb-4 border-top pt-4">
+    <p class="text-muted small"><i class="bi bi-c-circle"></i> 2026 Microlent Systems. strictly confidential.
+        Unauthorized access is prohibited.</p>
+</div>
+
+{% endblock %}

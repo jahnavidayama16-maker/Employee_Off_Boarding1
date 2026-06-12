@@ -1,0 +1,1 @@
+import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hr_offboarding_system.settings'); django.setup(); from accounts.models import CustomUser; f = open('users_utf8.txt', 'w', encoding='utf-8'); [f.write(f'Email: {u.email}, Role: {getattr(u, \'role\', \'N/A\')}, Active: {u.is_active}\n') for u in CustomUser.objects.all()]; f.close()

@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-0">Welcome, {{ user.full_name }}! 👋</h2>
+        <p class="text-muted mb-0">
+            <i class="bi bi-building me-1"></i>
+            {{ user.department.name|default:"No Department" }} &mdash; Manager Dashboard
+        </p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'team_approvals' %}" class="btn btn-warning fw-bold rounded-pill px-4 shadow-sm text-dark">
+            <i class="bi bi-inbox-fill me-2"></i> Review Queue
+            {% if pending_approvals > 0 %}
+                <span class="badge bg-dark ms-1 rounded-pill">{{ pending_approvals }}</span>
+            {% endif %}
+        </a>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">
+            <div class="card-body p-4 text-dark">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="fw-bold text-uppercase mb-1 opacity-60" style="font-size:0.72rem;letter-spacing:0.8px;">Pending Approvals</p>
+                        <h2 class="fw-bold display-5 mb-0">{{ pending_approvals }}</h2>
+                    </div>
+                </div>
+                <a href="{% url 'team_approvals' %}" class="btn btn-dark btn-sm mt-3 rounded-pill px-3 fw-bold">
+                    Review Now <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background:linear-gradient(135deg,#0f172a,#334155);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="fw-bold text-uppercase mb-1 text-white-50" style="font-size:0.72rem;letter-spacing:0.8px;">Total Projects</p>
+                        <h2 class="fw-bold display-5 mb-0">{{ total_projects }}</h2>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <span class="badge bg-primary bg-opacity-25 text-primary px-2 py-1" style="font-size:0.7rem;"><i class="bi bi-play-circle me-1"></i>{{ ongoing_projects }} Ongoing</span>
+                    <span class="badge bg-success bg-opacity-25 text-success px-2 py-1" style="font-size:0.7rem;"><i class="bi bi-check2 me-1"></i>{{ completed_projects }} Done</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background:linear-gradient(135deg,#059669,#10b981);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="fw-bold text-uppercase mb-1 text-white-50" style="font-size:0.72rem;letter-spacing:0.8px;">Ongoing Projects</p>
+                        <h2 class="fw-bold display-5 mb-0">{{ ongoing_projects }}</h2>
+                    </div>
+                </div>
+                <a href="{% url 'team_projects' %}" class="btn btn-light btn-sm mt-3 rounded-pill px-3 fw-bold text-success">
+                    View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="fw-bold text-uppercase mb-1 text-white-50" style="font-size:0.72rem;letter-spacing:0.8px;">Team Size</p>
+                        <h2 class="fw-bold display-5 mb-0">{{ team_size }}</h2>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <span class="badge bg-white bg-opacity-25 text-white px-2 py-1" style="font-size:0.7rem;"><i class="bi bi-person-check me-1"></i>Active Members</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Team Projects -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-kanban me-2 text-primary"></i> Team Projects
+                </h5>
+                <a href="{% url 'team_projects' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if team_projects %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3">Project</th>
+                                <th>Assigned To</th>
+                                <th class="pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in team_projects %}
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <span class="fw-bold">{{ project.name }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:30px;height:30px;font-size:0.7rem;">
+                                            {{ project.assigned_to.full_name|first|upper }}
+                                        </div>
+                                        <span style="font-size:0.85rem;">{{ project.assigned_to.full_name }}</span>
+                                    </div>
+                                </td>
+
+                                <td class="pe-4">
+                                    {% if project.status == 'Ongoing' %}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1" style="font-size:0.72rem;">
+                                            <i class="bi bi-play-circle me-1"></i>Ongoing
+                                        </span>
+                                    {% elif project.status == 'Pending' %}
+                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-2 py-1" style="font-size:0.72rem;">
+                                            <i class="bi bi-hourglass-split me-1"></i>Pending
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-2 py-1" style="font-size:0.72rem;">
+                                            <i class="bi bi-check-circle me-1"></i>Completed
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-kanban d-block mb-3" style="font-size:2.5rem;opacity:0.3;"></i>
+                    <p class="mb-1 fw-bold">No projects assigned yet.</p>
+                    <small>Projects assigned to your team members will appear here.</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Team Members -->
+    <div class="col-md-6">
+        <!-- Team Members -->
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-people me-2 text-primary"></i> My Team
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if team_members %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3">Employee</th>
+                                <th class="pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in team_members %}
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:36px;height:36px;font-size:0.8rem;">
+                                            {{ member.full_name|first|upper }}
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block">{{ member.full_name }}</span>
+                                            <small class="text-muted">{{ member.email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="pe-4">
+                                    {% with res=member.resignations.last %}
+                                        {% if res and res.admin_status != 'Approved' and res.manager_status != 'Rejected' %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-2 py-1" style="font-size:0.72rem;">
+                                                <i class="bi bi-hourglass-split me-1"></i>Offboarding
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1" style="font-size:0.72rem;">
+                                                <i class="bi bi-check-circle me-1"></i>Active
+                                            </span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-people d-block mb-3" style="font-size:2.5rem;opacity:0.3;"></i>
+                    <p>No team members found in your department.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Recent Actions & Alerts -->
+    <div class="col-md-6">
+        {% if pending_approvals > 0 %}
+        <div class="card shadow-sm border-0 rounded-4 mb-4 border-start border-4 border-warning">
+            <div class="card-body px-4 py-3 d-flex align-items-center gap-3">
+                <div class="bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px;">
+                    <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                </div>
+                <div>
+                    <p class="fw-bold mb-0 text-dark">{{ pending_approvals }} resignation{{ pending_approvals|pluralize }} awaiting your review.</p>
+                    <a href="{% url 'team_approvals' %}" class="text-warning fw-bold text-decoration-none small">Review now &rarr;</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if assets_pending_approval > 0 %}
+        <div class="card shadow-sm border-0 rounded-4 mb-4 border-start border-4 border-info">
+            <div class="card-body px-4 py-3 d-flex align-items-center gap-3">
+                <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px;">
+                    <i class="bi bi-laptop text-info fs-5"></i>
+                </div>
+                <div>
+                    <p class="fw-bold mb-0 text-dark">{{ assets_pending_approval }} asset{{ assets_pending_approval|pluralize }} pending your approval.</p>
+                    <a href="{% url 'team_assets' %}" class="text-info fw-bold text-decoration-none small">Manage Assets &rarr;</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body px-4 py-3 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px;">
+                        <i class="bi bi-laptop text-secondary fs-5"></i>
+                    </div>
+                    <div>
+                        <p class="fw-bold mb-0 text-dark">Team Assets Tracking</p>
+                        <p class="small text-muted mb-0">Monitor hardware assigned to your team.</p>
+                    </div>
+                </div>
+                <a href="{% url 'team_assets' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold">View Assets</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent Actions -->
+        <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-clock-history me-2 text-secondary"></i> Recent Actions
+                </h5>
+            </div>
+            <div class="card-body px-4 py-3">
+                {% if recent_actions %}
+                    {% for res in recent_actions %}
+                    <div class="d-flex align-items-start gap-3 py-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="{% if res.manager_status == 'Approved' %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px;height:36px;">
+                            <i class="bi bi-{% if res.manager_status == 'Approved' %}check-circle-fill text-success{% else %}x-circle-fill text-danger{% endif %}"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold" style="font-size:0.875rem;">{{ res.employee.full_name }}</p>
+                            <small class="text-muted">
+                                {{ res.manager_status }} &mdash; {{ res.created_at|date:"d M Y" }}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox d-block mb-2" style="font-size:2rem;opacity:0.3;"></i>
+                        <small>No actions taken yet.</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

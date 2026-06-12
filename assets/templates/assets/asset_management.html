@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row pt-4">
+    <div class="col-md-12">
+        <h3 class="mb-4 fw-bold">Asset Management <span class="badge bg-primary bg-opacity-75 fs-6 align-middle ms-2">Hardware Recovery</span></h3>
+        
+        <!-- Filters and Search Bar -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body p-3">
+                <form method="get" class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" name="q" value="{{ search_query }}" class="form-control border-start-0 ps-0 bg-light shadow-none" placeholder="Search by Employee Name or Asset Name...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="status" class="form-select bg-light shadow-none border-secondary" onchange="this.form.submit()">
+                            <option value="">All Statuses</option>
+                            <option value="Issued" {% if status_filter == 'Issued' %}selected{% endif %}>Issued (Pending Return)</option>
+                            <option value="Returned" {% if status_filter == 'Returned' %}selected{% endif %}>Successfully Returned</option>
+                            <option value="Lost" {% if status_filter == 'Lost' %}selected{% endif %}>Lost / Compromised</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary fw-bold shadow-sm rounded-3">Filter Results</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="table-responsive p-0 m-0 rounded-4">
+                <table class="table table-hover mb-0 border-0 align-middle">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3 fw-bold border-0">Asset Description</th>
+                            <th class="py-3 fw-bold border-0">Manager Approval</th>
+                            <th class="py-3 fw-bold border-0">Assigned Profile</th>
+                            <th class="py-3 fw-bold border-0">Current Status</th>
+                            {% if is_admin_hr %}<th class="pe-4 py-3 fw-bold border-0 text-end">Administrative Controls</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        {% for asset in assets %}
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-secondary bg-opacity-10 text-secondary rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-laptop fs-5"></i>
+                                    </div>
+                                    <span class="fw-bold text-dark">{{ asset.name }}</span>
+                                </div>
+                            </td>
+                            <td class="py-3">
+                                {% if asset.manager_approval == 'Cleared' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success"><i class="bi bi-check-circle"></i> Cleared</span>
+                                {% else %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning"><i class="bi bi-hourglass-split"></i> Pending</span>
+                                {% endif %}
+                                {% if asset.manager_remarks %}
+                                    <div class="small text-muted mt-1 fst-italic" style="max-width: 150px;">"{{ asset.manager_remarks }}"</div>
+                                {% endif %}
+                            </td>
+                            <td class="py-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-5 text-muted me-2"></i>
+                                    <span class="fw-bold text-secondary">{{ asset.assigned_to.full_name }}</span>
+                                </div>
+                            </td>
+                            <td class="py-3">
+                                {% if asset.status == 'Returned' %}
+                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success fw-bold px-3 py-2"><i class="bi bi-check2-circle me-1"></i> Returned</span>
+                                {% elif asset.status == 'Lost' %}
+                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger fw-bold px-3 py-2"><i class="bi bi-x-circle me-1"></i> Lost Array</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning fw-bold px-3 py-2"><i class="bi bi-broadcast me-1"></i> Active (Issued)</span>
+                                {% endif %}
+                            </td>
+                            {% if is_admin_hr %}
+                            <td class="pe-4 py-3 text-end">
+                                <form method="post" action="{% url 'update_status' pk=asset.pk %}" class="d-flex gap-2 justify-content-end align-items-center mb-0">
+                                    {% csrf_token %}
+                                    <select name="status" class="form-select form-select-sm shadow-none border-secondary" style="width: 140px; background-color: #f8f9fa;" onchange="this.form.submit()">
+                                        <option value="Issued" {% if asset.status == 'Issued' %}selected{% endif %}>Issued</option>
+                                        <option value="Returned" {% if asset.status == 'Returned' %}selected{% endif %}>Mark Returned</option>
+                                        <option value="Lost" {% if asset.status == 'Lost' %}selected{% endif %}>Mark Lost</option>
+                                    </select>
+                                    <noscript><button type="submit" class="btn btn-dark btn-sm shadow-sm fw-bold px-3 rounded-3">Execute <i class="bi bi-shield-check ms-1"></i></button></noscript>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-search text-muted opacity-50 d-block mb-3" style="font-size: 3rem;"></i>
+                                <h6 class="fw-bold text-secondary">No Assets Match Your Query</h6>
+                                <p class="text-muted small">Try adjusting your filters or search terms.</p>
+                                <a href="?" class="btn btn-outline-secondary btn-sm rounded-pill px-3 mt-2">Clear Filters</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

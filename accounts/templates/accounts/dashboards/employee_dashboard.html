@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-0">Welcome, {{ user.full_name }}! 👋</h2>
+        <p class="text-muted mb-0">{{ user.department.name|default:"No Department" }} &mdash; Employee Portal</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'request_resignation' %}" class="btn btn-primary shadow-sm fw-bold rounded-pill px-4">
+            <i class="bi bi-file-earmark-plus me-2"></i> New Resignation
+        </a>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg,#1d4ed8,#3b82f6);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-white-50 fw-bold text-uppercase mb-1" style="font-size:0.72rem;letter-spacing:0.8px;">My Resignations</p>
+                        <h2 class="fw-bold mb-0 display-5">{{ res_count }}</h2>
+                    </div>
+                </div>
+                <a href="{% url 'request_resignation' %}" class="btn btn-light btn-sm mt-3 rounded-pill px-3 fw-bold text-primary">
+                    {% if res_count == 0 %}Raise Resignation{% else %}View Status{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg,#059669,#10b981);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-white-50 fw-bold text-uppercase mb-1" style="font-size:0.72rem;letter-spacing:0.8px;">Assets Assigned</p>
+                        <h2 class="fw-bold mb-0 display-5">{{ asset_count }}</h2>
+                    </div>
+                </div>
+                <!-- FIX: Button now links to assets page instead of being disabled -->
+                <a href="{% url 'manage_assets' %}" class="btn btn-light btn-sm mt-3 rounded-pill px-3 fw-bold text-success">
+                    View My Assets
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg,#0f172a,#334155);">
+            <div class="card-body p-4 text-white">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-white-50 fw-bold text-uppercase mb-1" style="font-size:0.72rem;letter-spacing:0.8px;">Current Stage</p>
+                        <h5 class="fw-bold mb-0 mt-2">
+                            {% if latest_resignation %}
+                                {{ latest_resignation.current_stage }}
+                            {% else %}
+                                No Active Request
+                            {% endif %}
+                        </h5>
+                    </div>
+                </div>
+                <span class="btn btn-light btn-sm mt-3 rounded-pill px-3 fw-bold text-dark opacity-75" style="cursor:default;">
+                    {% if latest_resignation %}Next: {{ latest_resignation.next_role }}{% else %}Nothing pending{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Resignation Pipeline -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-diagram-3 me-2 text-primary"></i> Active Resignation Pipeline</h5>
+            </div>
+            <div class="card-body p-4">
+                {% if latest_resignation %}
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        {% if latest_resignation.admin_status == 'Approved' %}
+                            {% with pct=100 %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold text-success">Completed</small>
+                                <small class="fw-bold text-success">{{ pct }}%</small>
+                            </div>
+                            <div class="progress rounded-pill" style="height:8px;">
+                                <div class="progress-bar bg-success" style="width:{{ pct }}%;"></div>
+                            </div>
+                            {% endwith %}
+                        {% elif latest_resignation.hr_status == 'Approved' %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold text-warning">Admin Sign-off</small>
+                                <small class="fw-bold">75%</small>
+                            </div>
+                            <div class="progress rounded-pill" style="height:8px;">
+                                <div class="progress-bar bg-warning" style="width:75%;"></div>
+                            </div>
+                        {% elif latest_resignation.manager_status == 'Approved' %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold text-info">HR Clearance</small>
+                                <small class="fw-bold">50%</small>
+                            </div>
+                            <div class="progress rounded-pill" style="height:8px;">
+                                <div class="progress-bar bg-info" style="width:50%;"></div>
+                            </div>
+                        {% elif latest_resignation.manager_status == 'Rejected' or latest_resignation.hr_status == 'Rejected' or latest_resignation.admin_status == 'Rejected' %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold text-danger">Rejected</small>
+                                <small class="fw-bold text-danger">—</small>
+                            </div>
+                            <div class="progress rounded-pill" style="height:8px;">
+                                <div class="progress-bar bg-danger" style="width:100%;"></div>
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold text-primary">Manager Review</small>
+                                <small class="fw-bold">25%</small>
+                            </div>
+                            <div class="progress rounded-pill" style="height:8px;">
+                                <div class="progress-bar bg-primary" style="width:25%;"></div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Step Indicators -->
+                    <div class="d-flex justify-content-between align-items-center position-relative">
+                        <div class="position-absolute top-50 start-0 w-100 border-top border-2" style="border-color:#e2e8f0;z-index:0;"></div>
+
+                        {% for step in step_data %}
+                        {% endfor %}
+
+                        <!-- Submitted -->
+                        <div class="text-center position-relative" style="z-index:1;flex:1;">
+                            <div class="badge bg-success p-3 rounded-circle border border-white border-3 shadow-sm mb-2">
+                                <i class="bi bi-send-check h5 mb-0"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="font-size:0.8rem;">Submitted</h6>
+                            <small class="text-success fw-bold" style="font-size:0.7rem;">Done</small>
+                        </div>
+
+                        <!-- Manager -->
+                        <div class="text-center position-relative" style="z-index:1;flex:1;">
+                            <div class="badge {% if latest_resignation.manager_status == 'Approved' %}bg-success{% elif latest_resignation.manager_status == 'Rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-3 rounded-circle border border-white border-3 shadow-sm mb-2">
+                                <i class="bi bi-person-workspace h5 mb-0"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="font-size:0.8rem;">Manager</h6>
+                            <small class="fw-bold {% if latest_resignation.manager_status == 'Approved' %}text-success{% elif latest_resignation.manager_status == 'Rejected' %}text-danger{% else %}text-warning{% endif %}" style="font-size:0.7rem;">{{ latest_resignation.manager_status }}</small>
+                        </div>
+
+                        <!-- HR -->
+                        <div class="text-center position-relative" style="z-index:1;flex:1;">
+                            <div class="badge {% if latest_resignation.hr_status == 'Approved' %}bg-success{% elif latest_resignation.hr_status == 'Rejected' %}bg-danger{% elif latest_resignation.manager_status == 'Approved' %}bg-warning text-dark{% else %}bg-light text-muted{% endif %} p-3 rounded-circle border border-white border-3 shadow-sm mb-2">
+                                <i class="bi bi-person-badge h5 mb-0"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="font-size:0.8rem;">HR</h6>
+                            <small class="fw-bold {% if latest_resignation.hr_status == 'Approved' %}text-success{% elif latest_resignation.hr_status == 'Rejected' %}text-danger{% elif latest_resignation.manager_status == 'Approved' %}text-warning{% else %}text-muted{% endif %}" style="font-size:0.7rem;">{{ latest_resignation.hr_status }}</small>
+                        </div>
+
+                        <!-- Admin -->
+                        <div class="text-center position-relative" style="z-index:1;flex:1;">
+                            <div class="badge {% if latest_resignation.admin_status == 'Approved' %}bg-success{% elif latest_resignation.admin_status == 'Rejected' %}bg-danger{% elif latest_resignation.hr_status == 'Approved' %}bg-warning text-dark{% else %}bg-light text-muted{% endif %} p-3 rounded-circle border border-white border-3 shadow-sm mb-2">
+                                <i class="bi bi-shield-lock h5 mb-0"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="font-size:0.8rem;">Admin</h6>
+                            <small class="fw-bold {% if latest_resignation.admin_status == 'Approved' %}text-success{% elif latest_resignation.admin_status == 'Rejected' %}text-danger{% elif latest_resignation.hr_status == 'Approved' %}text-warning{% else %}text-muted{% endif %}" style="font-size:0.7rem;">{{ latest_resignation.admin_status }}</small>
+                        </div>
+
+                        <!-- Done -->
+                        <div class="text-center position-relative" style="z-index:1;flex:1;">
+                            <div class="badge {% if latest_resignation.admin_status == 'Approved' %}bg-success{% else %}bg-light text-muted{% endif %} p-3 rounded-circle border border-white border-3 shadow-sm mb-2">
+                                <i class="bi bi-check-circle h5 mb-0"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0" style="font-size:0.8rem;">Complete</h6>
+                            <small class="fw-bold {% if latest_resignation.admin_status == 'Approved' %}text-success{% else %}text-muted{% endif %}" style="font-size:0.7rem;">{% if latest_resignation.admin_status == 'Approved' %}Done{% else %}—{% endif %}</small>
+                        </div>
+                    </div>
+
+                    <!-- Rejection Alert -->
+                    {% if latest_resignation.manager_status == 'Rejected' or latest_resignation.hr_status == 'Rejected' or latest_resignation.admin_status == 'Rejected' %}
+                        <div class="alert alert-danger mt-4 mb-0 border-0 shadow-sm rounded-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Rejection Reason:</strong> {{ latest_resignation.rejection_reason }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Exit Feedback -->
+                    {% if latest_resignation.manager_status == 'Approved' and not latest_resignation.exit_feedback %}
+                        <div class="mt-4 pt-3 border-top">
+                            <h6 class="fw-bold mb-1"><i class="bi bi-chat-left-text me-2 text-primary"></i>Exit Interview Feedback Required</h6>
+                            <p class="text-muted small mb-3">Your feedback is required before the HR stage can proceed.</p>
+                            <form method="post" action="{% url 'submit_exit_feedback' pk=latest_resignation.pk %}">
+                                {% csrf_token %}
+                                <textarea name="exit_feedback" class="form-control mb-3 rounded-3" rows="3" required
+                                          placeholder="Share your honest experience about your time at Microlent Systems..."></textarea>
+                                <button type="submit" class="btn btn-primary shadow-sm fw-bold px-4 rounded-pill">
+                                    <i class="bi bi-send me-2"></i>Submit Feedback
+                                </button>
+                            </form>
+                        </div>
+                    {% elif latest_resignation.exit_feedback %}
+                        <div class="mt-4 pt-3 border-top d-flex align-items-center gap-2 text-success fw-bold">
+                            <i class="bi bi-check-circle-fill fs-5"></i> Exit interview feedback submitted.
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox d-block mb-3" style="font-size:2.5rem;opacity:0.3;"></i>
+                        <p class="mb-3">No active resignation in the system.</p>
+                        <a href="{% url 'request_resignation' %}" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-file-earmark-plus me-2"></i> Raise Resignation
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- My Assets Section -->
+{% if my_assets %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-laptop me-2 text-success"></i> My Assigned Assets</h5>
+                <a href="{% url 'manage_assets' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3">Asset</th>
+                                <th>Manager Approval</th>
+                                <th>Assigned On</th>
+                                <th class="pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asset in my_assets %}
+                            <tr>
+                                <td class="ps-4 py-3 fw-bold"><i class="bi bi-laptop text-muted me-2"></i>{{ asset.name }}</td>
+                                <td>
+                                    {% if asset.manager_approval == 'Cleared' %}
+                                        <span class="text-success"><i class="bi bi-check-circle"></i> Cleared</span>
+                                    {% else %}
+                                        <span class="text-warning"><i class="bi bi-hourglass-split"></i> Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted">{{ asset.assigned_date|date:"d M Y" }}</td>
+                                <td class="pe-4">
+                                    {% if asset.status == 'Returned' %}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2"><i class="bi bi-check2-circle me-1"></i>Returned</span>
+                                    {% elif asset.status == 'Lost' %}
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Lost</span>
+                                    {% else %}
+                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2"><i class="bi bi-broadcast me-1"></i>Issued</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

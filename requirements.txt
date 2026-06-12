@@ -1,0 +1,9 @@
+asgiref==3.11.1
+Django==6.0.3
+django-environ==0.13.0
+pypdf==6.9.2
+sqlparse==0.5.5
+tzdata==2026.1
+gunicorn
+whitenoise
+psycopg2-binary

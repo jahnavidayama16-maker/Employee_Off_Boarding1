@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'DM Sans', sans-serif !important;
+    }
+
+    .login-wrapper {
+        min-height: 82vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 900px;
+        max-width: 98vw;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+    }
+
+    .login-left {
+        background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-left::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+        top: -80px;
+        right: -80px;
+    }
+
+    .login-left::after {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+        bottom: -50px;
+        left: -50px;
+    }
+
+    .feature-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 100px;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 8px;
+        width: fit-content;
+    }
+
+    .login-right {
+        background: #ffffff;
+        padding: 3rem 2.8rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .form-control-custom {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 0.65rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.92rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        width: 100%;
+        outline: none;
+        color: #1e293b;
+    }
+
+    .form-control-custom:focus {
+        border-color: #2563eb;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    .form-control-custom.with-icon {
+        padding-left: 2.6rem;
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        color: white;
+        border: none;
+        border-radius: 0.65rem;
+        padding: 0.8rem 1.2rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #1e40af, #1d4ed8);
+        box-shadow: 0 6px 20px rgba(29,78,216,0.35);
+        transform: translateY(-1px);
+    }
+
+    .role-tab {
+        border: 1.5px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .role-tab:hover, .role-tab.active {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+        color: white;
+    }
+
+    .form-label-custom {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .error-text {
+        color: #dc2626;
+        font-size: 0.78rem;
+        margin-top: 4px;
+    }
+
+    @media (max-width: 700px) {
+        .login-split {
+            grid-template-columns: 1fr;
+        }
+        .login-left {
+            display: none;
+        }
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-split">
+        <!-- Left Panel -->
+        <div class="login-left">
+            <div class="position-relative" style="z-index: 1;">
+                <div class="mb-4">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" height="40" class="mb-3 bg-white rounded p-1 shadow-sm">
+                    <h2 class="text-white fw-bold mb-1" style="font-size: 1.7rem; line-height: 1.25;">Microlent Systems</h2>
+                    <p class="mb-0" style="color: rgba(255,255,255,0.55); font-size: 0.85rem;">Enterprise HR Offboarding Portal</p>
+                </div>
+
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 1.5rem 0;">
+
+                <div class="mb-2">
+                    <span class="feature-pill"><i class="bi bi-diagram-3-fill text-info"></i> Multi-Tier Approvals</span>
+                </div>
+                <div class="mb-2">
+                    <span class="feature-pill"><i class="bi bi-shield-check text-success"></i> Automated Clearances</span>
+                </div>
+                <div class="mb-2">
+                    <span class="feature-pill"><i class="bi bi-file-earmark-bar-graph text-warning"></i> Compliance Auditing</span>
+                </div>
+                <div class="mb-4">
+                    <span class="feature-pill"><i class="bi bi-laptop text-primary"></i> Asset Recovery Tracking</span>
+                </div>
+
+                <p style="color: rgba(255,255,255,0.35); font-size: 0.75rem; margin-top: auto;">
+                    &copy; 2026 Microlent Systems &mdash; Strictly Confidential
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="login-right">
+            <div class="mb-4">
+                <h4 class="fw-bold text-dark mb-1" style="font-size: 1.4rem;">Welcome Back</h4>
+                <p class="text-muted mb-0" id="role-subtitle" style="font-size: 0.88rem;">
+                    <i class="bi bi-lock-fill me-1 text-primary"></i> Select your portal below or enter credentials
+                </p>
+            </div>
+
+            <!-- Quick Role Login Shortcuts removed as requested -->
+
+            <!-- Error messages (non-field) -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger rounded-3 border-0 py-2 px-3 mb-3" style="font-size: 0.85rem;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ form.non_field_errors|striptags }}
+                </div>
+            {% endif %}
+
+            <form method="post" id="login-form">
+                {% csrf_token %}
+
+                <!-- Email Field -->
+                <div class="mb-3">
+                    <label class="form-label-custom" for="id_username">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-envelope-fill input-icon"></i>
+                        <input
+                            type="email"
+                            name="username"
+                            id="id_username"
+                            class="form-control-custom with-icon"
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    {% if form.username.errors %}
+                        <p class="error-text"><i class="bi bi-exclamation-circle me-1"></i>{{ form.username.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4">
+                    <label class="form-label-custom" for="id_password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-lock-fill input-icon"></i>
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="form-control-custom with-icon"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Sign In <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <a href="#" class="text-muted text-decoration-none" style="font-size: 0.82rem; font-weight: 600;">
+                    <i class="bi bi-question-circle me-1"></i> Forgot password? Contact IT Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const role = urlParams.get('role');
+
+    if (role) {
+        const emailField = document.getElementById('id_username');
+        const passwordField = document.getElementById('id_password');
+        const subtitle = document.getElementById('role-subtitle');
+
+        const roleMap = {
+            employee: { label: 'Employee Portal', icon: 'bi-person' },
+            manager:  { label: 'Manager Portal',  icon: 'bi-person-workspace' },
+            hr:       { label: 'HR Portal',        icon: 'bi-person-badge' },
+            admin:    { label: 'Admin Portal',     icon: 'bi-shield-lock' },
+        };
+
+        // Auto-fill disabled as requested
+        // if (emailField) emailField.value = role + "@microlent.com";
+        // if (passwordField) passwordField.value = role + "123";
+
+        const info = roleMap[role];
+        if (info && subtitle) {
+            subtitle.innerHTML = `<i class="bi ${info.icon} me-1 text-primary"></i> Signed in as: <strong>${info.label}</strong>`;
+        }
+    }
+});
+</script>
+{% endblock %}

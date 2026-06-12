@@ -1,0 +1,4 @@
+Email: admin@microlent.com, Role: Admin, Active: True
+Email: hr@microlent.com, Role: HR, Active: True
+Email: manager@microlent.com, Role: Manager, Active: True
+Email: employee@microlent.com, Role: Employee, Active: False

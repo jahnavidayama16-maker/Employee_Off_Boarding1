@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HR Offboarding System Diagrams</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; max-width: 1000px; margin: auto; }
+        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
+        h2 { margin-top: 50px; color: #2c3e50; }
+        .mermaid { margin-bottom: 40px; text-align: center; }
+        .page-break { page-break-before: always; }
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</head>
+<body>
+
+    <div class="no-print" style="background-color: #f8f9fa; padding: 20px; border-left: 5px solid #0d6efd; margin-bottom: 30px;">
+        <strong>How to save as PDF:</strong> Press <code>Ctrl + P</code> (or right-click and select "Print"), and change the printer destination to <strong>"Save as PDF"</strong>.
+    </div>
+
+    <h1>System Architecture Diagrams</h1>
+    <p>Microlent Systems HR Offboarding Platform</p>
+
+    <h2>1. Entity-Relationship (ER) Diagram</h2>
+    <div class="mermaid">
+    erDiagram
+        DEPARTMENT ||--o{ CUSTOM_USER : "has employees"
+        CUSTOM_USER ||--o{ RESIGNATION : "submits"
+        CUSTOM_USER ||--o{ ASSET : "assigned"
+        CUSTOM_USER ||--o{ PROJECT : "works on"
+        CUSTOM_USER ||--o{ AUDIT_LOG : "generates"
+        DEPARTMENT ||--o{ PROJECT : "manages"
+        RESIGNATION ||--o{ CLEARANCE : "requires"
+
+        DEPARTMENT {
+            int id
+            string name
+        }
+        CUSTOM_USER {
+            int id
+            string email
+            string full_name
+            string role
+        }
+        RESIGNATION {
+            int id
+            string manager_status
+            string hr_status
+            string admin_status
+        }
+        CLEARANCE {
+            int id
+            string department_name
+            string status
+        }
+        ASSET {
+            int id
+            string name
+            string status
+            string manager_approval
+        }
+        PROJECT {
+            int id
+            string title
+            string status
+        }
+        AUDIT_LOG {
+            int id
+            int user_id
+            string action
+        }
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>2. Use Case Diagram</h2>
+    <div class="mermaid">
+    flowchart LR
+        Emp([Employee])
+        Mgr([Manager])
+        HR([HR])
+        Admin([Admin])
+
+        subgraph HR Offboarding System
+            UC1([Submit Resignation])
+            UC2([Provide Exit Feedback])
+            UC3([Approve/Reject Resignation])
+            UC4([Manage Department Assets])
+            UC5([Assign/Track Projects])
+            UC6([Review Clearance Checklists])
+            UC7([Final Admin Sign-off])
+            UC8([View Analytics & Reports])
+        end
+
+        Emp --> UC1
+        Emp --> UC2
+
+        Mgr --> UC3
+        Mgr --> UC4
+        Mgr --> UC5
+
+        HR --> UC3
+        HR --> UC6
+        HR --> UC8
+
+        Admin --> UC7
+        Admin --> UC8
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>3. Sequence Diagram</h2>
+    <div class="mermaid">
+    sequenceDiagram
+        actor Employee
+        actor Manager
+        actor HR
+        actor Admin
+        participant System
+
+        Employee->>System: Submit Resignation Request
+        System-->>Manager: Notify / Add to Queue
+        Manager->>System: Review & Approve
+        System->>System: Generate Clearance Checklists
+        Manager->>System: Review Team Assets & Clear
+        System-->>HR: Notify / Add to HR Queue
+        HR->>System: Verify Asset & Clearances
+        HR->>System: Approve HR Stage
+        System-->>Employee: Request Exit Feedback
+        Employee->>System: Submit Exit Feedback
+        System-->>Admin: Notify / Add to Final Queue
+        Admin->>System: Final Approval
+        System-->>Employee: Final Offboarding Complete
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>4. Activity (State) Diagram</h2>
+    <div class="mermaid">
+    stateDiagram-v2
+        [*] --> Submitted
+        Submitted --> Manager_Review
+        
+        Manager_Review --> Rejected_By_Manager : Rejects
+        Manager_Review --> HR_Clearance : Approves
+        
+        state HR_Clearance {
+            [*] --> Await_Asset_Clearance
+            Await_Asset_Clearance --> Asset_Cleared : Manager Clears
+            Asset_Cleared --> Await_Checklists
+            Await_Checklists --> Checklists_Cleared : Clears
+        }
+        
+        HR_Clearance --> Rejected_By_HR : Rejects
+        HR_Clearance --> Await_Exit_Feedback : Approves
+        
+        Await_Exit_Feedback --> Admin_Signoff : Feedback Submitted
+        
+        Admin_Signoff --> Rejected_By_Admin : Rejects
+        Admin_Signoff --> Completed : Approves
+        
+        Rejected_By_Manager --> [*]
+        Rejected_By_HR --> [*]
+        Rejected_By_Admin --> [*]
+        Completed --> [*]
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>5. Data Flow Diagram (Level 0)</h2>
+    <div class="mermaid">
+    flowchart TD
+        E1[Employee]
+        E2[Manager]
+        E3[HR / Admin]
+
+        P0((HR Offboarding System))
+
+        E1 -- "Forms & Feedback" --> P0
+        P0 -- "Status Updates" --> E1
+
+        E2 -- "Approvals & Updates" --> P0
+        P0 -- "Pending Queues" --> E2
+
+        E3 -- "Sign-offs" --> P0
+        P0 -- "Logs & Analytics" --> E3
+    </div>
+
+</body>
+</html>
